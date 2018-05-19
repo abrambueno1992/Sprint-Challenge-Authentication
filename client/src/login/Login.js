@@ -24,19 +24,26 @@ class Login extends React.Component {
         this.setState({ [name]: value });
     };
     sendCredentials = e => {
-        console.log("Fired the sendcredentials")
+        console.log("Fired the sendcredentials", this.state)
         e.preventDefault();
+        let tname = this.state.username;
 
         axios
             .post('http://localhost:5000/api/login', this.state)
             .then(response => {
+                this.props.setName(tname);
                 localStorage.setItem('token', response.data.token);
-                console.log('This is insde the submit, this.props:', response)
+                console.log('This is response.data for login:', response)
                 this.props.history.push('/jokes');
+                
             })
             .catch(err => {
                 localStorage.removeItem('token');
+                console.log('error')
             });
+            localStorage.setItem('username', this.state.username);
+            
+            this.setState({username: '', password:''});
     }
     handleSelect = (e) => {
         e.preventDefault();
@@ -46,6 +53,7 @@ class Login extends React.Component {
 
     }
     render() {
+        // console.log("This is the localStorage username: ", localStorage.getItem('username') )
         return (
             <div style={slogin} >
             <h3>Please Sign In</h3>

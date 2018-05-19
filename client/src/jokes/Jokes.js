@@ -16,6 +16,15 @@ class Jokes extends React.Component {
 
     };
     componentDidMount = () => {
+        if (window.localStorage.getItem('token') === null) {
+            this.fetchData()
+        } else {
+            this.refetch()
+        }
+        
+    }
+    fetchData = () => {
+        // e.preventDefault();
         const token = localStorage.getItem('token');
 
         const options = {
@@ -28,11 +37,37 @@ class Jokes extends React.Component {
             .then(res => {
                 console.log('This is the response data from jokes, res.data:', res.data);
                 this.setState({ jokes: res.data });
+                console.log("This is the username in storage:", window.localStorage.getItem('username'))
+                // this.props.checkToken();
+
+
             })
             .catch(err => {
                 console.log('Error fetching jokes', err);
                 this.props.history.push('/signin');
             })
+    };
+    refetch = () => {
+        const token = window.localStorage.getItem('token');
+        const options = {
+            headers: {
+                Authorization: token,
+            },
+        };
+        axios
+        .get('http://localhost:5000/api/jokes', options)
+        .then(res => {
+            // this.props.checkToken()
+            console.log('This is the response data from jokes, res.data:', res.data);
+            console.log("This is the username in storage:", window.localStorage.getItem('username'))
+
+            this.setState({ jokes: res.data });
+            
+        })
+        .catch(err => {
+            console.log('Error fetching jokes', err);
+            this.props.history.push('/signin');
+        })
     }
 
     render() {
