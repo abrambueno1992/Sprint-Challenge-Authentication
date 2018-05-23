@@ -33,7 +33,7 @@ class Signup extends React.Component {
 
             .then(res => {
                 this.props.setName(username);
-                localStorage.setItem('username', username);
+                localStorage.setItem('username', username.toLocaleLowerCase());
                 console.log('this is the response for creatin a new user', res.data);
                 // localStorage.setItem('token', response.data.token);
                 // console.log('This is insde the submit, this.props:', response)
@@ -65,7 +65,7 @@ class Signup extends React.Component {
         this.props.history.push('/jokes');
     };
     handleSelect = () => {
-        console.log('Fired in signin, the handleSelect', this.props)
+        console.log('Fired in signUP, the handleSelect', this.props)
         this.props.handleSelect();
 
     }

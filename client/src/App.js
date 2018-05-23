@@ -3,9 +3,8 @@ import { Route, withRouter, Link } from 'react-router-dom';
 import Login from './login/Login';
 import Jokes from './jokes/Jokes';
 import Signup from './signup/Signup';
-
-
-
+import {connect} from 'react-redux';
+import {getJokeAction} from './actions/actions';
 class App extends Component {
   constructor(props) {
     super(props);
@@ -28,11 +27,15 @@ class App extends Component {
         marginLeft: '25%',
         marginRight: '25%'
       },
-      username: ''
+      username: '',
+      jokes : []
     }
   }
   componentDidMount = () => {
+    this.props.jokes;
+    
     this.checkToken();
+
   }
   checkToken = () => {
 
@@ -48,15 +51,28 @@ class App extends Component {
       this.setState({ introSty: { backgroundColor: 'beige', padding: 10, height: 1200, color: 'red', textDecoration: 'none', border: '2px solid white', textAlign: 'center' } })
       this.setState({ logged: true });
       this.setState({ select: true });
-      this.setState({username: window.localStorage.getItem('username')})
-      // this.setState({username: ''})
+      this.setState({username: window.localStorage.getItem('username')});
       this.props.history.push('/jokes');
+      // let jdata = this.props.jokes;
+      // this.setState({jokes:jdata})
+      // this.handleJokes()
+      
     }
     console.log('This is the localStorageToken: ', localStorage.getItem('token'))
+  }
+  handleJokes = () => {
+    if (this.state.jokes.length === 0) {
+      // this.props.getJokeAction();
+    } else {
+      let jdata = this.props.jokes;
+      this.setState({jokes:jdata});
+      this.props.history.push('/jokes');
+    }
   }
 
   signout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('username');
     this.setState({username:''})
     this.props.history.push('/login');
   };
@@ -93,10 +109,12 @@ class App extends Component {
   }
 
   passProps2 = (props) => {
+    console.log('This is this inside of props for SignUp', this);
     return (
       <Signup
         handleSelect={this.handleSelect.bind(this)}
         setName={this.setName.bind(this)}
+        
         {...props}
       />
     )
@@ -128,5 +146,10 @@ class App extends Component {
     );
   }
 }
-
-export default withRouter(App);
+const mapStateToProps = state => {
+  return {jokes: state.jokes,
+  users: state.users}
+}
+// export default (App);
+// export default (connect, {getJokeAction})(App)
+export default connect(mapStateToProps, { getJokeAction })(App);
